@@ -1,0 +1,298 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Documentation Portal API",
+    "description": "High-performance REST API for documentation portal",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server"
+    },
+    {
+      "url": "https://staging-api.example.com/v1",
+      "description": "Staging server"
+    }
+  ],
+  "paths": {
+    "/docs": {
+      "get": {
+        "summary": "List all documentation pages",
+        "tags": ["Documentation"],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Documentation version",
+            "schema": {
+              "type": "string",
+              "enum": ["v1", "v2", "v3"]
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "Language locale",
+            "schema": {
+              "type": "string",
+              "enum": ["en", "es", "fr", "de"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DocPage"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/docs/{id}": {
+      "get": {
+        "summary": "Get a specific documentation page",
+        "tags": ["Documentation"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Document ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocPage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "List all users",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "Search documentation",
+        "tags": ["Search"],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "Search query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SearchResult"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DocPage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique document ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "Document title"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly slug"
+          },
+          "content": {
+            "type": "string",
+            "description": "Document content in markdown"
+          },
+          "version": {
+            "type": "string",
+            "enum": ["v1", "v2", "v3"]
+          },
+          "locale": {
+            "type": "string",
+            "enum": ["en", "es", "fr", "de"]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "title", "slug", "content", "version", "locale"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "name", "email"]
+      },
+      "UserInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": ["name", "email"]
+      },
+      "SearchResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string",
+            "description": "Excerpt of the document showing search context"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL to the document"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}

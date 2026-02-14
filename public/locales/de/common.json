@@ -1,0 +1,31 @@
+{
+  "common": {
+    "search": "Suchen",
+    "search_placeholder": "Dokumentation durchsuchen...",
+    "edit_on_github": "Diese Seite auf GitHub bearbeiten",
+    "feedback": "Feedback",
+    "feedback_submit": "Feedback senden",
+    "feedback_input_placeholder": "Teilen Sie Ihre Gedanken mit...",
+    "feedback_success": "Danke für Ihr Feedback!",
+    "dark_mode": "Dunkler Modus",
+    "light_mode": "Heller Modus",
+    "language": "Sprache",
+    "version": "Version",
+    "documentation": "Dokumentation",
+    "api_reference": "API-Referenz",
+    "get_started": "Erste Schritte",
+    "home": "Startseite",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "table_of_contents": "Inhaltsverzeichnis",
+    "no_results": "Keine Ergebnisse gefunden",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "close": "Schließen",
+    "menu": "Menü"
+  }
+}
