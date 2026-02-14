@@ -53,8 +53,11 @@ export function Sidebar() {
       <nav className="p-4">
         <ul className="space-y-2">
           {sidebarNav.map((item) => {
-            const isActive = currentSlug === item.id;
-            const href = `/${currentLang}/docs/${currentVersion}/${item.id}`;
+            const isApiReference = item.id === 'api-reference';
+            const isActive = isApiReference 
+              ? pathname === '/api-reference'
+              : currentSlug === item.id;
+            const href = isApiReference ? '/api-reference' : `/${currentLang}/docs/${currentVersion}/${item.id}`;
             
             return (
               <li key={item.id}>
