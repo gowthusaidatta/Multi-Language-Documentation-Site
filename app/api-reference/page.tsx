@@ -4,13 +4,23 @@ import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 
 // Dynamically import SwaggerUI to avoid SSR issues
-const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false });
+const SwaggerUI = dynamic(() => import('swagger-ui-react').then(mod => mod.default), { 
+  ssr: false,
+  loading: () => <div className="text-center py-8">Loading Swagger UI...</div>
+});
 
 export default function ApiReference() {
   const [swaggerSpec, setSwaggerSpec] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    
     // Load the OpenAPI spec on client side
     fetch('/openapi.json')
       .then(response => {
@@ -26,9 +36,25 @@ export default function ApiReference() {
         setError(err.message);
         console.error('Error loading swagger spec:', err);
       });
-  }, []);
+  }, [mounted]);
 
-  if (error || !swaggerSpec) {
+  if (!mounted) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            API Reference
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            Interactive API documentation powered by Swagger UI
+          </p>
+        </div>
+        <div className="text-center py-8">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
     return (
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
@@ -49,10 +75,10 @@ export default function ApiReference() {
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
-                {error ? 'Error loading API documentation' : 'Loading API documentation...'}
+                Error loading API documentation
               </h3>
               <div className="mt-2 text-sm text-red-700 dark:text-red-300">
-                <p>{error || 'Please wait while the API specification loads.'}</p>
+                <p>{error}</p>
               </div>
             </div>
           </div>
@@ -61,9 +87,25 @@ export default function ApiReference() {
     );
   }
 
+  if (!swaggerSpec) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            API Reference
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            Interactive API documentation powered by Swagger UI
+          </p>
+        </div>
+        <div className="text-center py-8">Loading API specification...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
+    <div className="w-full">
+      <div className="max-w-6xl mx-auto mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           API Reference
         </h1>
@@ -72,72 +114,91 @@ export default function ApiReference() {
         </p>
       </div>
       
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-        <div className="swagger-ui-wrapper">
-          <SwaggerUI 
-            spec={swaggerSpec}
-            deepLinking={true}
-            presets={[
-              // @ts-ignore
-              SwaggerUI.presets.apis,
-              // @ts-ignore
-              SwaggerUI.presets.apis.reset
-            ]}
-            layout="BaseLayout"
-            docExpansion="list"
-            defaultModelsExpandDepth={1}
-            defaultModelExpandDepth={1}
-          />
-        </div>
+      <div className="swagger-container">
+        <SwaggerUI 
+          url="/openapi.json"
+          deepLinking={true}
+          docExpansion="list"
+          defaultModelsExpandDepth={1}
+          defaultModelExpandDepth={1}
+          tryItOutEnabled={true}
+        />
       </div>
       
       <style jsx global>{`
-        .swagger-ui-wrapper {
-          padding: 20px;
+        .swagger-container {
+          width: 100%;
+          background-color: #fafafa;
         }
-        
+
+        .swagger-container .swagger-ui {
+          max-width: 100%;
+          padding: 20px 0;
+        }
+
         .swagger-ui {
-          color: #333;
+          font-family: sans-serif;
         }
-        
+
+        .swagger-ui .topbar {
+          display: none;
+        }
+
         .swagger-ui .info {
-          margin-bottom: 30px;
+          margin: 30px 0;
         }
-        
+
+        .swagger-ui .scheme-container {
+          display: none;
+        }
+
         .swagger-ui .opblock {
-          margin-bottom: 15px;
+          margin: 15px 0;
+          border: 1px solid #e0e0e0;
           border-radius: 4px;
-          box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        
-        .swagger-ui .opblock-summary-method {
-          font-weight: bold;
-          padding: 6px 15px;
-          border-radius: 3px;
-          color: white;
-        }
-        
-        .swagger-ui .opblock-tag {
-          font-size: 24px;
-          font-weight: normal;
+
+        .swagger-ui .opblock-summary {
           padding: 10px 20px;
-          margin: 0 0 5px 0;
-          background: transparent;
-          border-bottom: 1px solid #ebebeb;
         }
-        
+
+        .swagger-ui .opblock-tag {
+          font-size: 20px;
+          font-weight: 600;
+          margin: 20px 0 10px 0;
+          padding: 15px 0;
+          border-bottom: 2px solid #e0e0e0;
+        }
+
+        .dark .swagger-container {
+          background-color: #1f2937;
+        }
+
         .dark .swagger-ui {
           color: #e5e7eb;
         }
-        
+
         .dark .swagger-ui .opblock {
-          background: #1f2937;
-          border: 1px solid #374151;
+          background: #2d3748;
+          border: 1px solid #4a5568;
         }
-        
+
         .dark .swagger-ui .opblock-tag {
-          border-bottom: 1px solid #374151;
+          border-bottom: 2px solid #4a5568;
           color: #f9fafb;
+        }
+
+        .dark .swagger-ui input,
+        .dark .swagger-ui select,
+        .dark .swagger-ui textarea {
+          background-color: #374151;
+          color: #f3f4f6;
+          border: 1px solid #4b5563;
+        }
+
+        .dark .swagger-ui .response-col_status {
+          color: #f3f4f6;
         }
       `}</style>
     </div>
