@@ -2,25 +2,29 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
-const sidebarNav = [
-  { id: 'introduction', title: 'Introduction' },
-  { id: 'getting-started', title: 'Getting Started' },
-  { id: 'installation', title: 'Installation' },
-  { id: 'configuration', title: 'Configuration' },
-  { id: 'api-reference', title: 'API Reference' },
-  { id: 'troubleshooting', title: 'Troubleshooting' },
-  { id: 'faq', title: 'FAQ' },
-];
+interface NavItem {
+  id: string;
+  title: string;
+}
 
-export function Sidebar() {
+interface SidebarProps {
+  versionNavMap: Record<string, NavItem[]>;
+}
+
+export function Sidebar({ versionNavMap }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(true);
   const pathname = usePathname();
   const pathParts = pathname.split('/');
   const currentLang = pathParts[1] || 'en';
   const currentVersion = pathParts[3] || 'v1';
   const currentSlug = pathParts[4] || 'introduction';
+
+  // Select nav items based on current version
+  const navItems = useMemo(() => {
+    return versionNavMap[currentVersion] || versionNavMap['v1'] || [];
+  }, [currentVersion, versionNavMap]);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -52,7 +56,7 @@ export function Sidebar() {
       
       <nav className="p-4">
         <ul className="space-y-2">
-          {sidebarNav.map((item) => {
+          {navItems.map((item) => {
             const isApiReference = item.id === 'api-reference';
             const isActive = isApiReference 
               ? pathname === '/api-reference'
