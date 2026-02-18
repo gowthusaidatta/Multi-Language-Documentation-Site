@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "flexsearch": "0.7.43",
@@ -22,15 +23,24 @@
     "swagger-ui-react": "5.17.14"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.29.0",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^14.0.0",
     "@types/node": "20.14.10",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "@types/swagger-ui-react": "4.18.3",
     "autoprefixer": "^10.4.24",
+    "babel-jest": "^30.2.0",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.4",
+    "jest": "^29.0.0",
+    "jest-environment-jsdom": "^30.2.0",
     "postcss": "8.4.39",
     "tailwindcss": "3.4.4",
+    "ts-jest": "^29.0.0",
     "typescript": "5.5.3"
   }
 }

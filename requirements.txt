@@ -1,0 +1,2 @@
+# This file is intentionally left blank because this project is a Node.js/Next.js app and does not use Python.
+# If you need to add Python dependencies for some reason, list them below.

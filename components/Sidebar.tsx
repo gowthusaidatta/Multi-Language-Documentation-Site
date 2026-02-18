@@ -58,11 +58,14 @@ export function Sidebar({ versionNavMap }: SidebarProps) {
         <ul className="space-y-2">
           {navItems.map((item) => {
             const isApiReference = item.id === 'api-reference';
-            const isActive = isApiReference 
+            // Only API Reference should use /api-reference, all others use /{lang}/docs/{version}/{slug}
+            const href = isApiReference
+              ? '/api-reference'
+              : `/${currentLang}/docs/${currentVersion}/${item.id}`;
+            // Active state: match exactly for API Reference, or for docs match the correct pattern
+            const isActive = isApiReference
               ? pathname === '/api-reference'
-              : currentSlug === item.id;
-            const href = isApiReference ? '/api-reference' : `/${currentLang}/docs/${currentVersion}/${item.id}`;
-            
+              : pathname === `/${currentLang}/docs/${currentVersion}/${item.id}`;
             return (
               <li key={item.id}>
                 <Link
